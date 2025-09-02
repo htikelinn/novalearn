@@ -3,12 +3,14 @@ package com.example.novalearn.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -38,6 +40,13 @@ public class Student extends User{
         this.education = education;
     }
 
+    @OneToMany(mappedBy = "student", cascade = CascadeType.PERSIST)
+    private List<StudentCourse> studentCourses = new ArrayList<>();
+
+    public void addStudentCourse(StudentCourse studentCourse) {
+        studentCourse.setStudent(this);
+        studentCourses.add(studentCourse);
+    }
 
 
 // @param mapKeyColumn

@@ -1,0 +1,16 @@
+DROP DATABASE novalearn
+
+CREATE DATABASE novalearn
+
+SHOW DATABASES;
+
+USE novalearn;
+
+
+SHOW TABLES;
+
+SELECT * FROM roles
+
+SELECT * FROM users
+
+SELECT * FROM course

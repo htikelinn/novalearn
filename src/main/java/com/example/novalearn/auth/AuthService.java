@@ -69,12 +69,13 @@ public class AuthService {
                 role = new Role();
                 role.setRoleName("ROLE_TEACHER");
             }
+            registerDto.getNetWorth();
             var teacher = new Teacher(
                     registerDto.getFirstName(),
                     registerDto.getLastName(),
                     registerDto.getEmail(),
                     registerDto.getUsername(),
-                    passwordEncoder.encode(registerDto.getPassword()),registerDto.getNetWorth().valueOf(0));
+                    passwordEncoder.encode(registerDto.getPassword()),BigDecimal.valueOf(0));
 
             Optional.of(registerDto.getQualifications()).ifPresent(
                     qualifications -> {

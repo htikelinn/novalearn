@@ -8,6 +8,7 @@ import jakarta.persistence.CollectionTable;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,6 +32,14 @@ public class Teacher extends User{
             BigDecimal netWorth) {
         super(firstName, lastName, email, username, password);
         this.netWorth = netWorth;
+    }
+
+    @OneToMany(mappedBy = "teacher")
+    private List<Course> courses = new ArrayList<>();
+   
+    public void addCourse(Course course) {
+        course.setTeacher(this);
+        courses.add(course);
     }
 
 

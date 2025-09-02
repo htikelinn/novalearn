@@ -27,11 +27,11 @@ public class NovalearnApplication {
 	public ApplicationRunner runner() {
 		return args -> {
 			SiteOwner siteOwner = new SiteOwner("John", "Doe", "2Hs2G@example.com", "johndoe", passwordEncoder.encode("12345"), BigDecimal.valueOf(0.5));
-			siteOwnerDao.save(siteOwner);
 			
 			Role role = new Role();
 			role.setRoleName("ROLE_SITE_OWNER");
 			siteOwner.addRole(role);
+			siteOwnerDao.save(siteOwner);
 			// siteOwnerDao.findAll().forEach(System.out::println);
 		};
 	}
