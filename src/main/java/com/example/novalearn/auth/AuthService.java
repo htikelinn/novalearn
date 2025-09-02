@@ -1,5 +1,6 @@
 package com.example.novalearn.auth;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.novalearn.dao.RoleDao;
 import com.example.novalearn.dao.StudentDao;
 import com.example.novalearn.dao.TeacherDao;
 import com.example.novalearn.dto.LoginRequest;
@@ -43,6 +45,9 @@ public class AuthService {
     private StudentDao studentDao;
 
     @Autowired
+    private RoleDao roleDao;
+
+    @Autowired
     private AuthenticationManager authenticationManager;
 
     public String login(LoginRequest loginRequest) {
@@ -59,27 +64,32 @@ public class AuthService {
     public String register(RegisterDto registerDto, String accountType) {
 
         if ("teacher".equalsIgnoreCase(accountType)) {
-            Role teacherRole = new Role();
-            teacherRole.setRoleName("ROLE_TEACHER");
+            Role role = getRole("ROLE_TEACHER");
+            if (role == null) {
+                role = new Role();
+                role.setRoleName("ROLE_TEACHER");
+            }
             var teacher = new Teacher(
                     registerDto.getFirstName(),
                     registerDto.getLastName(),
                     registerDto.getEmail(),
                     registerDto.getUsername(),
-                    passwordEncoder.encode(registerDto.getPassword()),
-                    registerDto.getNetWorth());
+                    passwordEncoder.encode(registerDto.getPassword()),registerDto.getNetWorth().valueOf(0));
 
             Optional.of(registerDto.getQualifications()).ifPresent(
                     qualifications -> {
                         qualifications.forEach(qualification -> teacher.addQualification(qualification));
                     });
-            teacher.addRole(teacherRole);
+            teacher.addRole(role);
             teacherDao.save(teacher);
             return "Successfully registered";
 
         } else if ("student".equalsIgnoreCase(accountType)) {
-            Role studentRole = new Role();
-            studentRole.setRoleName("ROLE_STUDENT");
+            Role role = getRole("ROLE_STUDENT");
+            if (role == null) {
+                role = new Role();
+                role.setRoleName("ROLE_STUDENT");
+            }
             var student = new Student(
                     registerDto.getFirstName(),
                     registerDto.getLastName(),
@@ -87,13 +97,17 @@ public class AuthService {
                     registerDto.getUsername(),
                     passwordEncoder.encode(registerDto.getPassword()),
                     Education.valueOf(registerDto.getEducation()));
-            student.addRole(studentRole);
+            student.addRole(role);
             studentDao.save(student);
             return "Successfully registered";
 
         } else {
             throw new RegisterAccountTypeError("Invalid account type: " + accountType);
         }
+    }
+
+    private Role getRole(String roleName) {
+        return roleDao.findByRoleName(roleName).orElse(null);
     }
 
 }
